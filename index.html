@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>ViewBlast 3000 — Free Views Generator</title>
+<style>
+  :root{
+    --bg1:#0a0a1a; --bg2:#12082b;
+    --cyan:#25f4ee; --magenta:#fe2c55; --violet:#7c3aed; --gold:#ffd166;
+    --glass: rgba(255,255,255,.06); --glass-b: rgba(255,255,255,.12);
+    --txt:#f4f4ff; --muted:#a9a6c9;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    min-height:100vh;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--txt);
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(37,244,238,.18), transparent 60%),
+      radial-gradient(1000px 700px at 110% 20%, rgba(254,44,85,.20), transparent 55%),
+      radial-gradient(900px 900px at 50% 120%, rgba(124,58,237,.28), transparent 60%),
+      linear-gradient(160deg,var(--bg1),var(--bg2));
+    background-attachment:fixed;
+    display:flex; align-items:center; justify-content:center;
+    padding:22px 16px; overflow-x:hidden;
+  }
+  /* floating blobs */
+  .blob{position:fixed; border-radius:50%; filter:blur(60px); opacity:.35; z-index:0; pointer-events:none;}
+  .b1{width:220px;height:220px;background:var(--cyan); top:-60px;left:-60px; animation:float 9s ease-in-out infinite;}
+  .b2{width:260px;height:260px;background:var(--magenta); bottom:-80px;right:-70px; animation:float 11s ease-in-out infinite reverse;}
+  .b3{width:180px;height:180px;background:var(--violet); top:40%;right:8%; animation:float 13s ease-in-out infinite;}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(18px,-22px) scale(1.08);}}
+
+  .wrap{position:relative; z-index:2; width:100%; max-width:430px;}
+
+  .brand{ text-align:center; margin-bottom:16px; }
+  .logo{
+    width:74px;height:74px;border-radius:22px;margin:0 auto 12px;
+    background:linear-gradient(135deg,var(--cyan),var(--violet) 55%,var(--magenta));
+    display:flex;align-items:center;justify-content:center;font-size:36px;
+    box-shadow:0 12px 40px rgba(124,58,237,.55), 0 0 0 1px rgba(255,255,255,.12) inset;
+    animation:pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-6px) rotate(2deg);}}
+  .brand h1{margin:0; font-size:26px; letter-spacing:.5px;
+    background:linear-gradient(90deg,var(--cyan),#fff,var(--magenta));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .brand p{margin:6px 0 0; color:var(--muted); font-size:13px;}
+
+  .card{
+    background:var(--glass);
+    border:1px solid var(--glass-b);
+    border-radius:22px;
+    padding:20px;
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 24px 60px rgba(0,0,0,.45);
+    position:relative; overflow:hidden;
+  }
+  .card::before{content:"";position:absolute;inset:0;
+    background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.08),transparent 70%);
+    transform:translateX(-120%); animation:sheen 6s ease-in-out infinite;}
+  @keyframes sheen{0%{transform:translateX(-120%);}55%,100%{transform:translateX(120%);}}
+
+  .live{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    font-size:12px;color:var(--muted);margin-bottom:14px;
+  }
+  .dot{width:8px;height:8px;border-radius:50%;background:#37e27e;box-shadow:0 0 10px #37e27e;animation:blink 1.4s infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+  .fakeinput{
+    width:100%;padding:14px 15px;border-radius:14px;font-size:15px;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+    color:var(--txt);outline:none;transition:.2s;
+  }
+  .fakeinput:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(37,244,238,.18);}
+
+  .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .chip{
+    text-align:center;padding:11px 4px;border-radius:12px;font-size:13px;font-weight:700;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);cursor:pointer;transition:.18s;
+  }
+  .chip small{display:block;font-size:9px;font-weight:500;color:var(--muted);margin-top:2px;}
+  .chip.active{background:linear-gradient(135deg,rgba(37,244,238,.22),rgba(254,44,85,.22));border-color:var(--cyan);transform:translateY(-2px);}
+
+  .btn{
+    width:100%;margin-top:16px;padding:16px;border:none;border-radius:15px;
+    font-size:16px;font-weight:800;letter-spacing:.6px;cursor:pointer;color:#fff;
+    background:linear-gradient(135deg,var(--magenta),var(--violet) 60%,var(--cyan));
+    background-size:200% 200%;
+    box-shadow:0 12px 30px rgba(254,44,85,.45);
+    transition:transform .12s ease, filter .2s; animation:grad 5s ease infinite;
+  }
+  @keyframes grad{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+  .btn:active{transform:scale(.97);}
+  .btn.ghost{background:rgba(255,255,255,.08);box-shadow:none;border:1px solid rgba(255,255,255,.16);}
+  .btn.retry{background:linear-gradient(135deg,#ff6b6b,var(--magenta));box-shadow:0 12px 30px rgba(254,44,85,.4);}
+
+  .stats{display:flex;justify-content:space-between;margin-top:16px;gap:8px;}
+  .stat{flex:1;text-align:center;padding:11px 6px;border-radius:13px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);}
+  .stat .n{font-size:16px;font-weight:800;color:var(--cyan);}
+  .stat .t{font-size:9.5px;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-top:3px;}
+
+  /* views / screens */
+  .screen{display:none;}
+  .screen.on{display:block;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+  .loader-wrap{text-align:center;padding:6px 0 2px;}
+  .ring{
+    width:120px;height:120px;margin:6px auto 20px;border-radius:50%;position:relative;
+    background:conic-gradient(var(--cyan) 0deg, var(--violet) 120deg, var(--magenta) 240deg, rgba(255,255,255,.08) 240deg);
+    display:flex;align-items:center;justify-content:center;
+    animation:spin 2.6s linear infinite;
+  }
+  .ring::after{content:"";position:absolute;inset:9px;border-radius:50%;background:#150c2c;}
+  .ring .pct{position:relative;z-index:2;font-size:26px;font-weight:800;animation:spin 2.6s linear infinite reverse;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .bar{height:9px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin:6px 0 16px;}
+  .bar i{display:block;height:100%;width:0%;border-radius:99px;
+    background:linear-gradient(90deg,var(--cyan),var(--violet),var(--magenta));transition:width .3s ease;}
+  .status{min-height:44px;font-size:14px;color:var(--muted);}
+  .status b{color:#fff;}
+
+  .nodes{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;margin:18px 4px 4px;}
+  .node{aspect-ratio:1;border-radius:3px;background:rgba(255,255,255,.08);transition:.25s;}
+  .node.on{background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+
+  .err{text-align:center;padding:6px 0;}
+  .err .ico{
+    width:96px;height:96px;margin:8px auto 18px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ff8a8a,#e0243c);
+    display:flex;align-items:center;justify-content:center;font-size:48px;
+    box-shadow:0 16px 40px rgba(224,36,60,.5); animation:shake .6s ease;
+  }
+  @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-9px);}40%{transform:translateX(9px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
+  .err h2{margin:0 0 8px;font-size:22px;}
+  .err p{margin:0 0 6px;color:var(--muted);font-size:14px;line-height:1.55;}
+  .code{display:inline-block;margin:12px 0 4px;padding:8px 14px;border-radius:10px;
+    background:rgba(224,36,60,.16);border:1px solid rgba(224,36,60,.35);
+    color:#ffb3bd;font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.5px;}
+
+  .reveal{text-align:center;padding:8px 0;}
+  .reveal .emoji{font-size:66px;animation:pop .5s cubic-bezier(.2,1.4,.4,1);}
+  @keyframes pop{0%{transform:scale(0) rotate(-25deg);}100%{transform:scale(1) rotate(0);}}
+  .reveal h2{margin:12px 0 10px;font-size:26px;
+    background:linear-gradient(90deg,var(--cyan),#fff,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .reveal p{color:var(--muted);font-size:14.5px;line-height:1.65;margin:8px 0;}
+  .byline{margin-top:16px;padding:13px;border-radius:14px;
+    background:linear-gradient(135deg,rgba(37,244,238,.16),rgba(254,44,85,.16));
+    border:1px solid rgba(255,255,255,.14);font-size:15px;}
+  .byline b{color:var(--cyan);}
+
+  .foot{text-align:center;margin:16px auto 2px;font-size:10.5px;color:rgba(169,166,201,.7);line-height:1.7;max-width:320px;}
+  .safe{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:5px 11px;border-radius:99px;
+    background:rgba(55,226,126,.12);border:1px solid rgba(55,226,126,.3);color:#8bf0b4;font-size:10px;}
+</style>
+</head>
+<body>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">⚡</div>
+      <h1>ViewBlast&nbsp;3000</h1>
+      <p>Free TikTok Views Generator · No login · Instant delivery</p>
+    </div>
+
+    <div class="card">
+
+      <!-- ============ FORM ============ -->
+      <section class="screen on" id="s-form">
+        <div class="live"><span class="dot"></span> <span id="liveCount">2,481,933</span> views delivered today</div>
+
+        <div class="field">
+          <label>TikTok Username or Video Link</label>
+          <input class="fakeinput" id="fakeInput" type="text" placeholder="@your_username  /  vm.tiktok.com/…" autocomplete="off" />
+        </div>
+
+        <div class="field">
+          <label>Select Views Package</label>
+          <div class="chips" id="chips">
+            <div class="chip" data-v="10K">10K<small>FREE</small></div>
+            <div class="chip active" data-v="50K">50K<small>POPULAR</small></div>
+            <div class="chip" data-v="100K">100K<small>HOT</small></div>
+            <div class="chip" data-v="500K">500K<small>MAX</small></div>
+          </div>
+        </div>
+
+        <button class="btn" id="goBtn">🚀 GENERATE VIEWS</button>
+
+        <div class="stats">
+          <div class="stat"><div class="n">99.9%</div><div class="t">Success</div></div>
+          <div class="stat"><div class="n">&lt;30s</div><div class="t">Delivery</div></div>
+          <div class="stat"><div class="n">0</div><div class="t">Password</div></div>
+        </div>
+      </section>
+
+      <!-- ============ LOADING ============ -->
+      <section class="screen" id="s-load">
+        <div class="loader-wrap">
+          <div class="ring"><div class="pct" id="pct">0%</div></div>
+          <div class="bar"><i id="barFill"></i></div>
+          <div class="status" id="status">Initializing engine…</div>
+          <div class="nodes" id="nodes"></div>
+        </div>
+      </section>
+
+      <!-- ============ ERROR ============ -->
+      <section class="screen" id="s-err">
+        <div class="err">
+          <div class="ico">⚠️</div>
+          <h2>Oops! Something went wrong</h2>
+          <p id="errLine">The request could not be completed.<br/>Don't worry — no data was sent. Please try again.</p>
+          <div class="code" id="errCode">ERR: VIEW_NODE_TIMEOUT</div>
+          <button class="btn retry" id="retryBtn">🔄 TRY AGAIN</button>
+        </div>
+      </section>
+
+      <!-- ============ REVEAL ============ -->
+      <section class="screen" id="s-reveal">
+        <div class="reveal">
+          <div class="emoji">😂</div>
+          <h2>GOTCHA! Ye PRANK hai bro</h2>
+          <p>Koi views nahi aa rahe… kyunki koi real generator hota hi nahi! 🙃</p>
+          <p>Aur tension mat lo — <b style="color:#8bf0b4">koi username, email ya password store nahi hua.</b><br/>Sab sirf is page ke andar tha, kahin gaya nahi. 👍</p>
+          <div class="byline">Pranked by <b id="prankName">a friend</b> 💀</div>
+          <button class="btn ghost" id="againBtn" style="margin-top:18px;">🔁 Prank Someone Else</button>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="foot">
+      This is a harmless joke page. It is not affiliated with TikTok.<br/>
+      No accounts, no passwords, no data leaves your device.
+      <div class="safe">🔒 100% offline · nothing sent · nothing stored</div>
+    </div>
+  </div>
+
+<script>
+  /* ============================================================
+     PRANK CONFIG — edit these two lines, that's it!
+     ============================================================ */
+  const PRANK_NAME     = "your friend";   // e.g. "Ali"
+  const REVEAL_AFTER   = 3;               // reveal after this many "Try Again" attempts (0 = on first error)
+  /* ============================================================ */
+
+  const $ = (id) => document.getElementById(id);
+  const screens = { form:$('s-form'), load:$('s-load'), err:$('s-err'), reveal:$('s-reveal') };
+  function show(name){
+    Object.values(screens).forEach(s => s.classList.remove('on'));
+    screens[name].classList.add('on');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  $('prankName').textContent = PRANK_NAME;
+
+  // decorative live counter
+  let live = 2481933;
+  setInterval(()=>{ live += Math.floor(Math.random()*180)+40; $('liveCount').textContent = live.toLocaleString(); }, 1400);
+
+  // package chips
+  let pkg = '50K';
+  $('chips').addEventListener('click', e=>{
+    const c = e.target.closest('.chip'); if(!c) return;
+    document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); pkg = c.dataset.v;
+  });
+
+  // fake node grid
+  const nodesEl = $('nodes');
+  for(let i=0;i<48;i++){ const d=document.createElement('div'); d.className='node'; nodesEl.appendChild(d); }
+  const nodeEls = [...document.querySelectorAll('.node')];
+
+  const steps = [
+    "Initializing <b>ViewBlast</b> engine…",
+    "Connecting to nearest TikTok edge server…",
+    "Warming up <b>12,000</b> delivery nodes…",
+    "Authenticating video endpoint…",
+    "Locating your content…",
+    "Deploying engagement pipeline…",
+    "Boosting reach score…",
+    "Optimizing delivery rate…",
+    "Pushing views to your video…",
+    "Almost there… <b>92%</b>"
+  ];
+  const errCodes = [
+    "ERR: VIEW_NODE_TIMEOUT",
+    "ERR: RATE_LIMIT_EXCEEDED",
+    "ERR: ENGAGEMENT_QUEUE_FULL",
+    "ERR: SERVER_BUSY_503",
+    "ERR: DELIVERY_WINDOW_MISSED"
+  ];
+
+  let attempts = 0;
+  let timer = null;
+
+  function startLoading(){
+    show('load');
+    let p = 0, stepI = 0;
+    $('barFill').style.width = '0%';
+    $('pct').textContent = '0%';
+    nodeEls.forEach(n=>n.classList.remove('on'));
+    $('status').innerHTML = steps[0];
+
+    // each attempt fails a bit earlier/faster -> "bar bar" feels real
+    const failAt = 72 + Math.floor(Math.random()*20); // 72–91%
+    clearInterval(timer);
+
+    timer = setInterval(()=>{
+      p += Math.random()*3.2 + 1.1;
+      if(p >= failAt){ p = failAt; render(p); clearInterval(timer); setTimeout(showError, 620); return; }
+      render(p);
+    }, 120);
+
+    function render(v){
+      const r = Math.min(100, Math.floor(v));
+      $('barFill').style.width = r + '%';
+      $('pct').textContent = r + '%';
+      const lit = Math.floor(nodeEls.length * (r/100));
+      nodeEls.forEach((n,i)=> n.classList.toggle('on', i < lit));
+      const si = Math.min(steps.length-1, Math.floor(r/100 * steps.length));
+      if(si !== stepI){ stepI = si; $('status').innerHTML = steps[si]; }
+    }
+  }
+
+  function showError(){
+    attempts++;
+    if(REVEAL_AFTER > 0 && attempts > REVEAL_AFTER){
+      show('reveal');
+      return;
+    }
+    $('errCode').textContent = errCodes[(attempts-1) % errCodes.length];
+    $('errLine').innerHTML = "The request could not be completed.<br/>Don't worry — no data was sent. Please try again.";
+    show('err');
+  }
+
+  $('goBtn').addEventListener('click', startLoading);
+  $('retryBtn').addEventListener('click', startLoading);
+  $('againBtn').addEventListener('click', ()=>{
+    attempts = 0;
+    $('fakeInput').value = '';
+    show('form');
+  });
+
+  // safety: this page makes NO network calls and stores NOTHING.
+  // (no fetch, no localStorage, no cookies — on purpose.)
+</script>
+</body>
+</html>
