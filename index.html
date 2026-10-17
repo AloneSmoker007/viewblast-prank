@@ -169,14 +169,14 @@
     <div class="brand">
       <div class="logo">⚡</div>
       <h1>ViewBlast&nbsp;3000</h1>
-      <p>Free TikTok Views Generator · No login · Instant delivery</p>
+      <p>Free TikTok Views Generator · Instant delivery</p>
     </div>
 
     <div class="card">
 
       <!-- ============ FORM ============ -->
       <section class="screen on" id="s-form">
-        <div class="live"><span class="dot"></span> <span id="liveCount">2,481,933</span> views delivered today</div>
+        <div class="live"><span class="dot"></span> <span id="liveCount">8,412</span> views delivered today</div>
 
         <div class="field">
           <label>TikTok Username or Video Link</label>
@@ -198,7 +198,7 @@
         <div class="stats">
           <div class="stat"><div class="n">99.9%</div><div class="t">Success</div></div>
           <div class="stat"><div class="n">&lt;30s</div><div class="t">Delivery</div></div>
-          <div class="stat"><div class="n">0</div><div class="t">Password</div></div>
+          <div class="stat"><div class="n">FREE</div><div class="t">No Charges</div></div>
         </div>
       </section>
 
@@ -217,7 +217,7 @@
         <div class="err">
           <div class="ico">⚠️</div>
           <h2>Oops! Something went wrong</h2>
-          <p id="errLine">The request could not be completed.<br/>Don't worry — no data was sent. Please try again.</p>
+          <p id="errLine">The request could not be completed.<br/>Please try again.</p>
           <div class="code" id="errCode">ERR: VIEW_NODE_TIMEOUT</div>
           <button class="btn retry" id="retryBtn">🔄 TRY AGAIN</button>
         </div>
@@ -229,7 +229,7 @@
           <div class="emoji">😂</div>
           <h2>GOTCHA! Ye PRANK hai bro</h2>
           <p>Koi views nahi aa rahe… kyunki koi real generator hota hi nahi! 🙃</p>
-          <p>Aur tension mat lo — <b style="color:#8bf0b4">koi username, email ya password store nahi hua.</b><br/>Sab sirf is page ke andar tha, kahin gaya nahi. 👍</p>
+          <p>Aur tension mat lo — <b style="color:#8bf0b4">kuch bhi store nahi hua.</b><br/>Sab bas mazak tha. 👍</p>
           <div class="byline">Pranked by <b id="prankName">a friend</b> 💀</div>
           <button class="btn ghost" id="againBtn" style="margin-top:18px;">🔁 Prank Someone Else</button>
         </div>
@@ -237,11 +237,6 @@
 
     </div>
 
-    <div class="foot">
-      This is a harmless joke page. It is not affiliated with TikTok.<br/>
-      No accounts, no passwords, no data leaves your device.
-      <div class="safe">🔒 100% offline · nothing sent · nothing stored</div>
-    </div>
   </div>
 
 <script>
@@ -263,8 +258,8 @@
   $('prankName').textContent = PRANK_NAME;
 
   // decorative live counter
-  let live = 2481933;
-  setInterval(()=>{ live += Math.floor(Math.random()*180)+40; $('liveCount').textContent = live.toLocaleString(); }, 1400);
+  let live = 8412;
+  setInterval(()=>{ live += Math.floor(Math.random()*3)+1; $('liveCount').textContent = live.toLocaleString(); }, 2600);
 
   // package chips
   let pkg = '50K';
@@ -338,7 +333,7 @@
       return;
     }
     $('errCode').textContent = errCodes[(attempts-1) % errCodes.length];
-    $('errLine').innerHTML = "The request could not be completed.<br/>Don't worry — no data was sent. Please try again.";
+    $('errLine').innerHTML = "The request could not be completed.<br/>Please try again.";
     show('err');
   }
 
